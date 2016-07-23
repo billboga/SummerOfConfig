@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "GPS distance";
+}
+
+@section Scripts
+{
+    <script>
+        $(function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+                    var accuracy = position.coords.accuracy;
+
+                    $('#recent-positions')
+                        .text('latitude: ' + latitude + ', longitude: ' + longitude + ', accuracy: ' + accuracy);
+
+                    $.post('/gpsdistance/create', {
+                        latitude: latitude,
+                        longitude: longitude,
+                        accuracy: accuracy
+                    });
+                }, function(error) {
+                    showErrorMessage(error.message);
+                }, { enableHighAccuracy: true });
+            }
+            else {
+                showErrorMessage('Geolocation is not enabled on this device.');
+            }
+
+            function showErrorMessage(message) {
+                alert(message);
+            }
+        });
+    </script>
+}
+
+<div class="row">
+    <div id="recent-positions" class="col-md-12">
+    </div>
+</div>

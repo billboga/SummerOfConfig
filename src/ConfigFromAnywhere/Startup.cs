@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ConfigFromAnywhere.Configuration;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ConfigFromAnywhere.Configuration;
+using System;
 
 namespace ConfigFromAnywhere
 {
@@ -11,20 +12,21 @@ namespace ConfigFromAnywhere
     {
         public Startup(IHostingEnvironment env)
         {
-            var twitterConfiguration = new ConfigurationBuilder()
+            var gpsConfiguration = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("twitter.config.json")
-                .AddJsonFile($"twitter.config.{env.EnvironmentName}.json", true)
+                .AddJsonFile("gps.config.json")
+                .AddJsonFile($"gps.config.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .Build();
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddTwitter(
-                    twitterConfiguration["consumerKey"],
-                    twitterConfiguration["consumerSecret"],
-                    twitterConfiguration["userAccessToken"],
-                    twitterConfiguration["userAccessSecret"],
-                    twitterConfiguration["hashTag"])
+                .AddGpsProgress(
+                    gpsConfiguration,
+                    "latitudeStart",
+                    "longitudeStart",
+                    "latitudeEnd",
+                    "longitudeEnd",
+                    out DistancePositionChanged)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -32,6 +34,11 @@ namespace ConfigFromAnywhere
 
 
         public IConfigurationRoot Configuration { get; }
+
+        /// <summary>
+        /// Latitude, longitude, accuracy.
+        /// </summary>
+        public static Action<double, double, string> DistancePositionChanged;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

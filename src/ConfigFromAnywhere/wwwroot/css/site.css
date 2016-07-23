@@ -16,3 +16,16 @@ select,
 textarea {
     max-width: 280px;
 }
+
+#progress-distance {
+    background-color: #888888;
+    height: 50vh;
+}
+
+#progress-distance-text {
+    font-size: 5em;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap
+}

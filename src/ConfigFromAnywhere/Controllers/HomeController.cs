@@ -5,21 +5,21 @@ namespace ConfigFromAnywhere.Controllers
 {
     public class HomeController : Controller
     {
-        private IConfigurationRoot _config;
-
         public HomeController(IConfigurationRoot config)
         {
-            _config = config;
+            this.config = config;
         }
+
+        private IConfigurationRoot config;
 
         public IActionResult Index()
         {
-            bool buttonIsDisabled;
+            double progress;
 
-            bool.TryParse(_config["ButtonIsDisabled"], out buttonIsDisabled);
+            double.TryParse(config["gps.distance.progress"], out progress);
 
-            ViewBag.BackgroundColor = _config["BackgroundColor"] ?? "transparent";
-            ViewBag.ButtonEnabled = !buttonIsDisabled;
+            ViewBag.Progress = (progress * 100).ToString("N0") ?? "0";
+            ViewBag.Accuracy = config["gps.accuracy"] ?? "∞";
 
             return View();
         }

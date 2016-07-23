@@ -1,20 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-    var enabled = ViewBag.ButtonEnabled;
 }
 
+@section head
+{
+    <meta http-equiv="refresh" content="1">
+}
 
 <div class="row">
     <div class="col-md-12">
-        @if (enabled)
-        {
-            <div><a href="#" class="btn btn-lg btn-success">Press Me.</a></div>
-        }
-        else
-        {
-            <div>The button is disabled.</div>
-
-        }
+        <div id="progress-distance" class="progress">
+            <div class="progress-bar progress-bar-info" style="width: @(ViewBag.Progress)%">
+                <div id="progress-distance-text">@(ViewBag.Progress)% (±@(ViewBag.Accuracy)m)</div>
+            </div>
+        </div>
     </div>
-
 </div>
