@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace ConfigFromAnywhere.Controllers
@@ -18,7 +14,13 @@ namespace ConfigFromAnywhere.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.ButtonEnabled = !bool.Parse(_config["ButtonIsDisabled"]);
+            bool buttonIsDisabled;
+
+            bool.TryParse(_config["ButtonIsDisabled"], out buttonIsDisabled);
+
+            ViewBag.BackgroundColor = _config["BackgroundColor"] ?? "transparent";
+            ViewBag.ButtonEnabled = !buttonIsDisabled;
+
             return View();
         }
 

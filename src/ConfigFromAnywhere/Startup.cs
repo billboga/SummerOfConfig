@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Drawing;
 using ConfigFromAnywhere.Configuration;
 
 namespace ConfigFromAnywhere
@@ -16,9 +11,20 @@ namespace ConfigFromAnywhere
     {
         public Startup(IHostingEnvironment env)
         {
+            var twitterConfiguration = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("twitter.config.json")
+                .AddJsonFile($"twitter.config.{env.EnvironmentName}.json", true)
+                .Build();
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddImageFile(null, "config\\config.jpg", "config\\config.jpg.regions", false, true)
+                .AddTwitter(
+                    twitterConfiguration["consumerKey"],
+                    twitterConfiguration["consumerSecret"],
+                    twitterConfiguration["userAccessToken"],
+                    twitterConfiguration["userAccessSecret"],
+                    twitterConfiguration["hashTag"])
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
